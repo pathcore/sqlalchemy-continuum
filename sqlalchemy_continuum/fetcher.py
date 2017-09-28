@@ -83,7 +83,7 @@ class VersionObjectFetcher(object):
                     ),
                     *[
                         getattr(attrs, pk) == getattr(obj, pk)
-                        for pk in get_primary_keys(obj.__class__)
+                        for pk in get_primary_keys(alias)
                         if pk != tx_column_name(obj)
                     ]
                 )
