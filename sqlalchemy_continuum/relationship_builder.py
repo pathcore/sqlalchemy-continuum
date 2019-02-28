@@ -316,7 +316,9 @@ class RelationshipBuilder(object):
             column.table
         )
         metadata = column.table.metadata
-        if metadata.schema:
+        if builder.parent_table.schema:
+            table_name = builder.parent_table.schema + '.' + builder.table_name
+        elif metadata.schema:
             table_name = metadata.schema + '.' + builder.table_name
         else:
             table_name = builder.table_name
@@ -344,7 +346,10 @@ class RelationshipBuilder(object):
         except ClassNotVersioned:
             self.remote_cls = self.property.mapper.class_
 
-        if self.property.secondary is not None and not self.property.viewonly:
+        if (self.property.secondary is not None and
+                not self.property.viewonly and
+                not self.manager.is_excluded_property(
+                    self.model, self.property.key)):
             self.build_association_version_tables()
 
             # store remote cls to association table column pairs
